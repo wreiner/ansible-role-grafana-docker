@@ -1,0 +1,12 @@
+---
+- name: "Create additional Grafana directories"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ grafana_docker__system_user }}"
+    group: "{{ grafana_docker__system_group }}"
+    mode: 0750
+  with_items:
+    - "{{ grafana_docker__data_dir }}/etc"
+    - "{{ grafana_docker__data_dir }}/data"
+    - "{{ grafana_docker__data_dir }}/data"

@@ -1,0 +1,38 @@
+---
+- include_tasks: "preflight.yml"
+
+- name: "Deploy Grafana service file"
+  template:
+    src: "grafana.service.j2"
+    dest: "/etc/systemd/system/grafana.service"
+  notify: "Restart grafana"
+
+- name: "Deploy Grafana config file"
+  template:
+    src: "grafana.ini.j2"
+    dest: "{{ grafana_docker__data_dir }}/etc/grafana.ini"
+    owner: "{{ grafana_docker__system_user }}"
+    group: "{{ grafana_docker__system_group }}"
+    mode: 0640
+  notify: "Restart grafana"
+
+- name: "Check if Grafana is already running before provisioning"
+  wait_for:
+    host: "{{ grafana_docker__listen_address }}"
+    port: "33000"
+    state: started
+    delay: 0
+    timeout: 3
+  ignore_errors: yes
+  register: _grafana_docker__grafana_started
+
+- name: "Start Grafana for provisioning"
+  systemd:
+    state: restarted
+    name: grafana
+    daemon_reload: yes
+    enabled: yes
+  when: _grafana_docker__grafana_started.failed is true
+
+- include_tasks: "datasources.yml"
+- include_tasks: "dashboards.yml"

@@ -1,0 +1,28 @@
+---
+- name: Import official Grafana dashboards
+  delegate_to: localhost
+  become: false
+  community.grafana.grafana_dashboard:
+    folder: "{{ item.folder }}"
+    dashboard_id: "{{ item.dashboard_id }}"
+    dashboard_revision: "{{ item.dashboard_revision }}"
+    state: "{{ item.state }}"
+    overwrite: "{{ item.overwrite }}"
+    grafana_url: "http://{{ mgmt_ipaddress }}:33000"
+    url_username: admin
+    url_password: "{{ grafana_docker__grafana_admin_password }}"
+  loop: "{{ grafana_docker__official_dashboards }}"
+
+- name: Import local Grafana dashboards
+  delegate_to: localhost
+  become: false
+  community.grafana.grafana_dashboard:
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+    commit_message: "{{ item.commit_message }}"
+    overwrite: "{{ item.overwrite }}"
+    folder: "{{ item.folder }}"
+    grafana_url: "http://{{ mgmt_ipaddress }}:33000"
+    url_username: admin
+    url_password: "{{ grafana_docker__grafana_admin_password }}"
+  loop: "{{ grafana_docker__local_dashboards }}"

@@ -1,0 +1,14 @@
+---
+- name: "Add prometheus datasource"
+  delegate_to: localhost
+  become: false
+  community.grafana.grafana_datasource:
+    name: "{{ item.name }}"
+    ds_type: "{{ item.ds_type }}"
+    ds_url: "{{ item.ds_url }}"
+    access: "{{ item.access }}"
+    is_default: "{{ item.is_default }}"
+    url: "http://{{ mgmt_ipaddress }}:33000"
+    url_username: admin
+    url_password: "{{ grafana_docker__grafana_admin_password }}"
+  loop: "{{ grafana_docker__datasources }}"

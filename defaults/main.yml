@@ -1,0 +1,9 @@
+---
+grafana_docker__image: "grafana/grafana"
+grafana_docker__grafana_version: "8.2.5"
+
+grafana_docker__data_dir: "/var/lib/docker/volumes/grafana"
+grafana_docker__config_dir: "{{ grafana_docker__data_dir }}/etc"
+
+grafana_docker__system_user: "nobody"
+grafana_docker__system_group: "root"
